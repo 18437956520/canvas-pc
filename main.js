@@ -5,7 +5,7 @@ autoSetCanvasSize(yyy)
 
 /********************/
 
-listenToMouse(yyy)
+listenToUser(yyy)
 
 /*****************/
 
@@ -13,12 +13,12 @@ var eraserEnabled = false
 
 eraser.onclick = function () {
     eraserEnabled = true
-    actions.className = 'actions x'    
+    actions.className = 'actions x'
 }
 
-brush.onclick = function(){
+brush.onclick = function () {
     eraserEnabled = false
-    actions.className = 'actions'    
+    actions.className = 'actions'
 }
 
 /**************/
@@ -56,49 +56,100 @@ function drawLine(x1, y1, x2, y2) { //封装
     context.closePath() //结束
 }
 
-function listenToMouse(canvas) {
+function listenToUser(canvas) {
     var using = false //是否开始使用
     var lastPoint = {
         x: undefined,
         y: undefined
     } //声明第一个点
 
-    canvas.onmousedown = function (aaa) {
-        var x = aaa.clientX //相对于窗口 而不是canvas
-        var y = aaa.clientY
-        using = true //是
-        // console.log(lastPoint)
-        //drawCircle(x, y, 1) //获取xy并画圈
-        if (eraserEnabled) {
-            context.clearRect(x - 5, y - 5, 10, 10)
-        } else {
-            lastPoint = {
-                "x": x,
-                "y": y
-            } //获取点的位置
+    //特性检测
+    if (document.body.ontouchstart !== undefined) {
+        //触屏设备
+        canvas.ontouchstart = function (aaa) {
+            console.log('mo')
+            var x = aaa.touches[0].clientX //相对于窗口 而不是canvas
+            var y = aaa.touches[0].clientY//多点触控 只获取单点
+            using = true //是
+            // console.log(lastPoint)
+            //drawCircle(x, y, 1) //获取xy并画圈
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                lastPoint = {
+                    "x": x,
+                    "y": y
+                } //获取点的位置
+            }
         }
-    }
 
-    canvas.onmousemove = function (aaa) {
-        var x = aaa.clientX
-        var y = aaa.clientY
+        canvas.ontouchmove = function (aaa) {
+            console.log('yizhimo')
+            var x = aaa.touches[0].clientX
+            var y = aaa.touches[0].clientY
 
-        if (!using) {return}
+            if (!using) {
+                return
+            }
 
-        if (eraserEnabled) {
-            context.clearRect(x - 5, y - 5, 10, 10)
-        } else {
-            newPoint = {
-                "x": x,
-                "y": y
-            } //获取新点的位置
-            //drawCircle(x, y, 1)
-            drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y) //新点与旧点相连成线
-            lastPoint = newPoint //旧点等于新点}
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                newPoint = {
+                    "x": x,
+                    "y": y
+                } //获取新点的位置
+                //drawCircle(x, y, 1)
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y) //新点与旧点相连成线
+                lastPoint = newPoint //旧点等于新点}
+            }
         }
-    }
 
-    canvas.onmouseup = function (aaa) {
-        using = false
+        canvas.ontouchend = function (aaa) {
+            console.log('ting')
+            using = false
+        }
+    } else {
+        //非触屏设备
+        canvas.onmousedown = function (aaa) {
+            var x = aaa.clientX //相对于窗口 而不是canvas
+            var y = aaa.clientY
+            using = true //是
+            // console.log(lastPoint)
+            //drawCircle(x, y, 1) //获取xy并画圈
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                lastPoint = {
+                    "x": x,
+                    "y": y
+                } //获取点的位置
+            }
+        }
+
+        canvas.onmousemove = function (aaa) {
+            var x = aaa.clientX
+            var y = aaa.clientY
+
+            if (!using) {
+                return
+            }
+
+            if (eraserEnabled) {
+                context.clearRect(x - 5, y - 5, 10, 10)
+            } else {
+                newPoint = {
+                    "x": x,
+                    "y": y
+                } //获取新点的位置
+                //drawCircle(x, y, 1)
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y) //新点与旧点相连成线
+                lastPoint = newPoint //旧点等于新点}
+            }
+        }
+
+        canvas.onmouseup = function (aaa) {
+            using = false
+        }
     }
 }
