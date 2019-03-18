@@ -69,7 +69,7 @@ function listenToUser(canvas) {
         canvas.ontouchstart = function (aaa) {
             console.log('mo')
             var x = aaa.touches[0].clientX //相对于窗口 而不是canvas
-            var y = aaa.touches[0].clientY//多点触控 只获取单点
+            var y = aaa.touches[0].clientY//多点触控,只获取单点
             using = true //是
             // console.log(lastPoint)
             //drawCircle(x, y, 1) //获取xy并画圈
